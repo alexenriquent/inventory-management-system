@@ -21,3 +21,27 @@ To simplify the problem, UQR assumes:
 * The inventory system should assume that the store will remain open forever. Although for simplicity in computing the actual profit gained, the system will be tested on a finite number of weeks.
 
 Given the stochastic model of the customers’ behavior, the type of store, and information about the available items in the store immediately before the shopping order is made, the inventory management system should decide which types of items and how many should be ordered and returned, so that the store gains the maximum profit possible. Profit is defined as the income the store gets (i.e., 75% of the total payment received from customer) minus the sum of the cost of returning the items and the penalty fee when items are being cut from the order list by UQR headquarter.
+
+## Input and Output format
+**Input format**. The input is a single .txt file, containing all the information about the store, the types and price of the items that can be sold at the store, and the store’s customers’ behaviour. The format of the input file is as follows.
+
+1. The first line is the store’s type, i.e., tiny, small, medium, large, or mega.
+2. The second line is the discount factor.
+3. The third line is the number of weeks that the inventory system will be tested.
+4. The fourth line is the penalty fee F.
+5. We assume that the type of items that can be sold in this store is indexed from 1 to T, where T is the maximum number of types of items that can be sold in this store. The fifth line then consists of T positive integers, separated by a white space. The first integer represents the price of item-type-1, the second represents the price of item-type-2, etc.
+6. The sixth line represent the amount of items per type prior to the first replenishment. This line consists of T positive integers, where the first integer represents the amount of item-type-1, the second represents the amount of item- type-2, etc.
+7. The subsequent lines represent the customers’ behaviour. This behaviour is represented as T probability matrices. Each matrix represents the custormers’ behaviour in buying a particular type of items. In particular, suppose P<sub>i</sub> is the probability matrix that corresponds to type-i (i ∈ [1, T]). Then, the element e<sub>jk</sub> at row-j (j ∈ [0, M]) and column-k (k ∈ [0, M]) of P<sub>i</sub> represents the conditional probability that in a week, the total requests for type-i is k items, given there are j items of type-i at the beginning of the week (right after the stocks are replenished). The notation M is the maximum number of items that can be stocked in the store. Note that the indexing for the matrices starts from 0 (i.e., to represent no such type of item), which means each matrix is of size (M+1)<sup>2</sup>. The list of probability matrices are written in the input file, starting at line-7: Line-7 to line-(7+M): represent the rows of P<sub>1</sub>. The numbers in each line (i.e., the columns) are separated by a white space. Each probability value has at most 3 decimal digits. Line-(7+(M+1)·(T-1)) to line-(6+(M+1)·T): represent the rows of P<sub>T</sub> in a sequential order.
+
+**Output format.** Your program should output the state, the order list, and the return list at each week. The format is as follows:
+
+1. The first line is the number of weeks the inventory system is being tested. Let’s denote this as N. The output file consists of 3N+2 lines.
+2. Line-2 represents the stocks in the store right before the first replenishment. It consists of T positive integers, where each integer is separated by a white space. The i<sup>th</sup> integer represents the number of items of type-i.
+3. Line-3 represents the customers’ request list for week-1. It consists of T positive integers, where each integer is separated by a white space. The i<sup>th</sup> integer represents the number of items of type-i being requested.
+4. Line-4 represents order list at the end of week-1. It consists of T positive integers, where each integer is separated by a white space. The i<sup>th</sup> integer represents the number of items of type-i being ordered.
+5. Line-5 represents return list at the end of week-1. It consists of T positive integers, where each integer is separated by a white space. The i<sup>th</sup> integer represents the number of items of type-i being returned.
+6. Line-6 represents the customers’ request list for week-2. It consists of T positive integers, where each integer is separated by a white space. The i<sup>th</sup> integer represents the number of items of type-i being requested.
+7. ⋮
+8. Line-3N-2 represents order list at the end of week-(N-1). It consists of T positive integers, where each integer is separated by a white space. The i<sup>th</sup> integer represents the number of items of type-i being ordered.
+9. Line-3N-1 represents return list at the end of week-(N-1). It consists of T positive integers, where each integer is separated by a white space. The i<sup>th</sup> integer represents the number of items of type-i being returned.
+10. Line-3N represents the customers’ request list for week-N. It consists of T positive integers, where each integer is separated by a white space. The i<sup>th</sup> integer represents the number of items of type-i being requested.
