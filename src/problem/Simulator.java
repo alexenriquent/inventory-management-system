@@ -195,12 +195,12 @@ public class Simulator {
 		if (verbose) {
 			System.out.println();
 			System.out.println("Week " + currentWeek);
-			System.out.println("Start stock:\t\t\t\t" + weekStartInventory);
-            System.out.println("Customer wants:\t\t\t\t" + wants);
+			System.out.println("Start stock:\t\t\t" + weekStartInventory);
+            System.out.println("Customer wants:\t\t\t" + wants);
             System.out.println("After customer consumption:\t" + afterConsumptionInventory);
-			System.out.println("Order:\t\t\t\t\t\t" + order);
-			System.out.println("Post-order:\t\t\t\t\t" + afterOrderInventory);
-			System.out.println("End:\t\t\t\t\t\t" + stockInventory);
+			System.out.println("Order:\t\t\t\t" + order);
+			System.out.println("Post-order:\t\t\t" + afterOrderInventory);
+			System.out.println("End:\t\t\t\t" + stockInventory);
 			System.out.println("Profit this week: " + profit);
 		
 			if (currentWeek == problemSpec.getNumWeeks()) {
