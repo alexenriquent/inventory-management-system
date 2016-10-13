@@ -3,6 +3,7 @@ package solver;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import problem.Store;
 import problem.Matrix;
@@ -24,41 +25,53 @@ public class MySolver implements OrderingAgent {
 	    // TODO Write your own code here.
 	}
 	
-	public List<Integer> generateStockOrder(List<Integer> stockInventory,
-											int numWeeksLeft) {
-
-		List<Integer> itemOrders = new ArrayList<Integer>();
-		List<Integer> itemReturns = new ArrayList<Integer>();
-
-		// Example code that buys one of each item type.
-        // TODO Replace this with your own code.
-
-		int totalItems = 0;
-		for (int i : stockInventory) {
-			totalItems += i;
+	public List<Integer> generateStockOrder(List<Integer> stockInventory, int numWeeksLeft) {
+		List<Integer> itemOrders = generateAction(stockInventory);
+				
+		for (int i = 0; i < 10; i++) {
+			List<Integer> a = generateAction(stockInventory);
+			System.out.println(a);
+			System.out.println(rewardFunction(stockInventory, a));
 		}
 		
-		int totalOrder = 0;
+		return itemOrders;
+	}
+	
+	public List<Integer> generateAction(List<Integer> stockInventory) {
+		List<Integer> itemOrders = new ArrayList<Integer>();
+		
+		int totalItems = stockInventory.stream().mapToInt(Integer::intValue).sum();
+		int totalOrders = 0;
+		
+		Random random = new Random();
+		
 		for (int i = 0; i < store.getMaxTypes(); i++) {
-			if (totalItems >= store.getCapacity() ||
-			        totalOrder >= store.getMaxPurchase()) {
+			if (totalItems >= store.getCapacity() || totalOrders >= store.getMaxPurchase()) {
 				itemOrders.add(0);
 			} else {
-				itemOrders.add(1);
-				totalOrder ++;
-				totalItems ++;
+				int orders = random.nextInt((store.getMaxPurchase() + 1) - totalOrders);
+				itemOrders.add(orders);
+				totalOrders += orders;
+				totalItems += orders;
 			}
-			itemReturns.add(0);
 		}
-
-
-		// combine orders and returns to get change for each item type
-		List<Integer> order = new ArrayList<Integer>(itemOrders.size());
-		for(int i = 0; i < itemOrders.size(); i++) {
-			order.add(itemOrders.get(i) - itemReturns.get(i));
+		
+		return itemOrders;
+	}
+	
+	public double rewardFunction(List<Integer> stockInventory, List<Integer> itemOrders) {
+		double totalReward = 0.0;
+		
+		for (int i = 0; i < store.getMaxTypes(); i++) {
+			double reward = 0.0;
+			for (int j = stockInventory.get(i) + itemOrders.get(i) + 1; j < store.getCapacity(); j++) {
+				reward = j - stockInventory.get(i) - itemOrders.get(i) 
+					   * (probabilities.get(i).get(stockInventory.get(i) + itemOrders.get(i), j));
+			}
+			totalReward += -1 * reward;
 		}
-
-		return order;
+		
+		return totalReward;
 	}
 
 }
