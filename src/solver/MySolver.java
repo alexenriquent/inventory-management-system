@@ -26,19 +26,47 @@ public class MySolver implements OrderingAgent {
 	}
 	
 	public List<Integer> generateStockOrder(List<Integer> stockInventory, int numWeeksLeft) {
-		List<Integer> itemOrders = generateAction(stockInventory);
-				
-		for (int i = 0; i < 5; i++) {
-			List<Integer> a = generateAction(stockInventory);
-			System.out.println("\nS = " + stockInventory);
-			System.out.println("A = " + a);
-			System.out.println("R(s) = " + rewardFunction(stockInventory));
-			System.out.println("R(s,a) = " + rewardFunction(stockInventory, a));
-			System.out.println("T(s,a,s') = " + transitionFunction(stockInventory, a));
-			System.out.println();
-		}
+		List<Integer> itemOrders = RTDP(stockInventory);
 		
+//		for (int i = 0; i < 5; i++) {
+//			List<Integer> a = generateAction(stockInventory);
+//			System.out.println("\nS = " + stockInventory);
+//			System.out.println("A = " + a);
+//			System.out.println("R(s) = " + reward(stockInventory));
+//			System.out.println("R(s,a) = " + reward(stockInventory, a));
+//			System.out.println("T(s,a,s') = " + transition(stockInventory, a));
+//			System.out.println("Q(s,a) = " + qValue(stockInventory, a));
+//			System.out.println();
+//		}
+				
 		return itemOrders;
+	}
+	
+	public List<Integer> RTDP(List<Integer> stockInventory) {
+		List<Integer> itemOrders = new ArrayList<Integer>();
+		double qValue = Double.NEGATIVE_INFINITY;
+		
+		double startTime = System.currentTimeMillis();
+		
+		while (System.currentTimeMillis() - startTime < 1000) {
+			List<Integer> orders = generateAction(stockInventory);
+			double q = qValue(stockInventory, orders);
+			if (q > qValue) {
+				qValue = q;
+				itemOrders.clear();
+				itemOrders.addAll(orders);
+			}
+		}
+
+		return itemOrders;
+	}
+	
+	public double qValue(List<Integer> stockInventory, List<Integer> itemOrders) {
+		double immediateReward = reward(stockInventory);
+		double expectedReward = reward(stockInventory, itemOrders);
+		double transition = transition(stockInventory, itemOrders);
+		
+		return immediateReward + (spec.getDiscountFactor() * (transition * expectedReward));
 	}
 	
 	public List<Integer> generateAction(List<Integer> stockInventory) {
@@ -54,6 +82,9 @@ public class MySolver implements OrderingAgent {
 				itemOrders.add(0);
 			} else {
 				int orders = random.nextInt((store.getMaxPurchase() + 1) - totalOrders);
+				while (totalItems + orders > store.getCapacity()) {
+					orders = random.nextInt((store.getMaxPurchase() + 1) - totalOrders);
+				}
 				itemOrders.add(orders);
 				totalOrders += orders;
 				totalItems += orders;
@@ -63,7 +94,7 @@ public class MySolver implements OrderingAgent {
 		return itemOrders;
 	}
 	
-	public double transitionFunction(List<Integer> stockInventory, List<Integer> itemOrders) {
+	public double transition(List<Integer> stockInventory, List<Integer> itemOrders) {
 		double totalTransitionProbability = 1.0;
 		List<Integer> updatedInventory = nextState(stockInventory, itemOrders);
 		
@@ -85,14 +116,13 @@ public class MySolver implements OrderingAgent {
 		return totalTransitionProbability;
 	}
 	
-	public double rewardFunction(List<Integer> stockInventory, List<Integer> itemOrders) {
+	public double reward(List<Integer> stockInventory) {
 		double totalReward = 0.0;
 		
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double reward = 0.0;
-			for (int j = stockInventory.get(i) + itemOrders.get(i) + 1; j < store.getCapacity(); j++) {
-				reward = j - stockInventory.get(i) - itemOrders.get(i) 
-					   * (probabilities.get(i).get(stockInventory.get(i) + itemOrders.get(i), j));
+			for (int j = stockInventory.get(i) + 1; j < store.getCapacity(); j++) {
+				reward = j - stockInventory.get(i) * (probabilities.get(i).get(stockInventory.get(i), j));
 			}
 			totalReward += -1 * reward;
 		}
@@ -100,13 +130,14 @@ public class MySolver implements OrderingAgent {
 		return totalReward;
 	}
 	
-	public double rewardFunction(List<Integer> stockInventory) {
+	public double reward(List<Integer> stockInventory, List<Integer> itemOrders) {
 		double totalReward = 0.0;
 		
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double reward = 0.0;
-			for (int j = stockInventory.get(i) + 1; j < store.getCapacity(); j++) {
-				reward = j - stockInventory.get(i) * (probabilities.get(i).get(stockInventory.get(i), j));
+			for (int j = stockInventory.get(i) + itemOrders.get(i) + 1; j < store.getCapacity(); j++) {
+				reward = j - stockInventory.get(i) - itemOrders.get(i) 
+					   * (probabilities.get(i).get(stockInventory.get(i) + itemOrders.get(i), j));
 			}
 			totalReward += -1 * reward;
 		}
@@ -123,5 +154,4 @@ public class MySolver implements OrderingAgent {
 		
 		return updatedInventory;
 	}
-
 }

@@ -1,5 +1,7 @@
 package problem;
 
+import solver.OrderingAgent;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,9 +74,10 @@ public class Simulator {
 	 * Simulate a week. A runtime exception is thrown if the stock order is
 	 * invalid. If the stock order is valid, the customer consumption is sampled
 	 * and the current week is advanced.
-	 * @param order List of item quantities to buy.
+	 * @param solver
+     * @param numWeeksLeft
 	 */
-	public void simulateStep(List<Integer> order) {
+	public void simulateStep(OrderingAgent solver, int numWeeksLeft) {
 		if (verbose && currentWeek > problemSpec.getNumWeeks()) {
 			System.out.println("Warning: problem spec num weeks exceeded.");
 		}
@@ -106,7 +109,11 @@ public class Simulator {
         requestHistory.add(wants);
 
         // record stock level after consumption
-        ArrayList<Integer> afterConsumptionInventory = new ArrayList<Integer>(stockInventory);
+        List<Integer> afterConsumptionInventory = new ArrayList<Integer>(stockInventory);
+
+
+        // ##### Get order
+        List<Integer> order = solver.generateStockOrder(afterConsumptionInventory, numWeeksLeft);
 
 
 		// ##### Cut items from order if necessary

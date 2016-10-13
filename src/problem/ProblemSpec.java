@@ -177,9 +177,9 @@ public class ProblemSpec {
             output.write(ls);
 
             // do not write order and request for week N
-  //          if(week == numWeeks-1) {
-   //             break;
-   //         }
+            if(week == numWeeks) {
+                break;
+            }
 
             // write order
             for(int item : orderHistory.get(week)) {

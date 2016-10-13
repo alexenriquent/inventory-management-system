@@ -1,7 +1,6 @@
 package solver;
 
 import java.lang.reflect.Constructor;
-import java.util.List;
 
 import problem.ProblemSpec;
 import problem.Simulator;
@@ -52,9 +51,7 @@ public class Runner {
 			}
 			
 			for (int i = 0; i < spec.getNumWeeks(); i++) {
-				List<Integer> shopping = solver.generateStockOrder(
-						simulator.getStockInventory(), spec.getNumWeeks() - (i+1));
-				simulator.simulateStep(shopping);
+				simulator.simulateStep(solver, spec.getNumWeeks() - (i+1));
 			}
 
 			totalProfit += simulator.getTotalProfit();
