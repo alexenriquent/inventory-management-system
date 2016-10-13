@@ -26,7 +26,7 @@ public class RTDP {
 		
 		double startTime = System.currentTimeMillis();
 
-		while (System.currentTimeMillis() - startTime < 1000) {
+		while (System.currentTimeMillis() - startTime < 100) {
 			List<Integer> orders = generateAction(stockInventory);
 			double q = qValue(stockInventory, orders);
 			if (q > qValue) {
