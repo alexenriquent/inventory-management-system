@@ -7,7 +7,7 @@ import problem.Simulator;
 
 public class Runner {
 	/** The path for the input file. */
-	private static String inputPath = "test/small-v1.txt";
+	private static String inputPath = "test/tiny-v1.txt";
 	/** The path for the output file. */
 	private static String outputPath = "test/output.txt";
 	
