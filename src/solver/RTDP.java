@@ -159,6 +159,9 @@ public class RTDP {
 					transitionProbability += probabilities.get(i).get(totalItems, j);
 				}
 			}
+			if (transitionProbability == 0.0) {
+				transitionProbability = 1.0;
+			}
 			totalTransitionProbability *= transitionProbability;
 		}
 		

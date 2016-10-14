@@ -24,26 +24,26 @@ public class ValueIteration {
 	public void valueIteration() {
 		for (Policy policy : policies) {
 			policy.setValue(policy.reward());
-		}
+		}	
 		
 		for (Policy policy : policies) {
-			double value = 0.0;
-			double maxValue = Double.NEGATIVE_INFINITY;
-			double immediateReward = policy.getValue();
 			double gamma = spec.getDiscountFactor();
 			double exponent = 1.0;
 										
-			while (Math.abs(value - immediateReward) > EPSILON) {
+			while (true) {
+				double maxValue = Double.NEGATIVE_INFINITY;
 				for (List<Integer> action : policy.getActions()) {
+					double immediateReward = policy.getValue();
 					double expectedReward = policy.reward(action);
 					double transition = policy.transition(action);
-					value = immediateReward + (Math.pow(gamma, exponent) * (transition * expectedReward));
+					double value = immediateReward + (Math.pow(gamma, exponent) * (transition * expectedReward));
 					if (value > maxValue) {
 						maxValue = value;
 						policy.getOptimalAction().clear();
 						policy.getOptimalAction().addAll(action);
 					}
 				}
+				if (Math.abs(maxValue - policy.getValue()) < EPSILON) break;
 				policy.setValue(maxValue);
 				exponent++;
 			}
