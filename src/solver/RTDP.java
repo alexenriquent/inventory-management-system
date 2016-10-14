@@ -26,7 +26,7 @@ public class RTDP {
 		
 		double startTime = System.currentTimeMillis();
 
-		while (System.currentTimeMillis() - startTime < 100) {
+		while (System.currentTimeMillis() - startTime < 1000) {
 			List<Integer> orders = generateAction(stockInventory);
 			double q = qValue(stockInventory, orders);
 			if (q > qValue) {
@@ -39,19 +39,19 @@ public class RTDP {
 		return itemOrders;
 	}
 	
-	public double qValue(List<Integer> stockInventory, List<Integer> itemOrders) {
-		double immediateReward = reward(stockInventory);
-		double expectedReward = reward(stockInventory, itemOrders);
-		double transition = transition(stockInventory, itemOrders);
+	private double qValue(List<Integer> state, List<Integer> action) {
+		double immediateReward = reward(state);
+		double expectedReward = reward(state, action);
+		double transition = transition(state, action);
 		
 		return immediateReward + (spec.getDiscountFactor() * (transition * expectedReward));
 	}
 	
-	public List<Integer> generateAction(List<Integer> stockInventory) {
+	private List<Integer> generateAction(List<Integer> state) {
 		List<Integer> itemOrders = new ArrayList<Integer>();
 		List<Integer> itemReturns = new ArrayList<Integer>();
 		
-		int totalItems = stockInventory.stream().mapToInt(Integer::intValue).sum();
+		int totalItems = state.stream().mapToInt(Integer::intValue).sum();
 		int totalOrders = 0;
 		int totalReturns = 0;
 		
@@ -78,30 +78,30 @@ public class RTDP {
 			}
 		}
 						
-		List<Integer> order = new ArrayList<Integer>(itemOrders.size());
+		List<Integer> action = new ArrayList<Integer>(itemOrders.size());
 		for(int i = 0; i < itemOrders.size(); i++) {
 			if (itemOrders.get(i) - itemReturns.get(i) < 0) {
-				order.add(0);
+				action.add(0);
 			} else {
-				order.add(itemOrders.get(i) - itemReturns.get(i));
+				action.add(itemOrders.get(i) - itemReturns.get(i));
 			}
 		}
 		
-		return order;
+		return action;
 	}
 	
-	public double transition(List<Integer> stockInventory, List<Integer> itemOrders) {
+	private double transition(List<Integer> state, List<Integer> action) {
 		double totalTransitionProbability = 1.0;
-		List<Integer> updatedInventory = nextState(stockInventory, itemOrders);
+		List<Integer> nextState = nextState(state, action);
 		
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double transitionProbability = 0.0;
-			int totalItems = stockInventory.get(i) + itemOrders.get(i);
-			if (updatedInventory.get(i) > totalItems) {
+			int totalItems = state.get(i) + action.get(i);
+			if (nextState.get(i) > totalItems) {
 				transitionProbability = 0.0;
-			} else if (updatedInventory.get(i) > 0 && updatedInventory.get(i) <= totalItems) {
-				transitionProbability = probabilities.get(i).get(totalItems, totalItems - updatedInventory.get(i));
-			} else if (updatedInventory.get(i) == 0) {
+			} else if (nextState.get(i) > 0 && nextState.get(i) <= totalItems) {
+				transitionProbability = probabilities.get(i).get(totalItems, totalItems - nextState.get(i));
+			} else if (nextState.get(i) == 0) {
 				for (int j = totalItems; j < store.getCapacity(); j++) {
 					transitionProbability += probabilities.get(i).get(totalItems, j);
 				}
@@ -112,13 +112,13 @@ public class RTDP {
 		return totalTransitionProbability;
 	}
 	
-	public double reward(List<Integer> stockInventory) {
+	private double reward(List<Integer> state) {
 		double totalReward = 0.0;
 		
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double reward = 0.0;
-			for (int j = stockInventory.get(i) + 1; j < store.getCapacity(); j++) {
-				reward = j - stockInventory.get(i) * (probabilities.get(i).get(stockInventory.get(i), j));
+			for (int j = state.get(i) + 1; j < store.getCapacity(); j++) {
+				reward = j - state.get(i) * (probabilities.get(i).get(state.get(i), j));
 			}
 			totalReward += -1 * reward;
 		}
@@ -126,14 +126,14 @@ public class RTDP {
 		return totalReward;
 	}
 	
-	public double reward(List<Integer> stockInventory, List<Integer> itemOrders) {
+	private double reward(List<Integer> state, List<Integer> action) {
 		double totalReward = 0.0;
 		
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double reward = 0.0;
-			for (int j = stockInventory.get(i) + itemOrders.get(i) + 1; j < store.getCapacity(); j++) {
-				reward = j - stockInventory.get(i) - itemOrders.get(i) 
-					   * (probabilities.get(i).get(stockInventory.get(i) + itemOrders.get(i), j));
+			for (int j = state.get(i) + action.get(i) + 1; j < store.getCapacity(); j++) {
+				reward = j - state.get(i) - action.get(i) 
+					   * (probabilities.get(i).get(state.get(i) + action.get(i), j));
 			}
 			totalReward += -1 * reward;
 		}
@@ -141,13 +141,13 @@ public class RTDP {
 		return totalReward;
 	}
 	
-	public List<Integer> nextState(List<Integer> stockInventory, List<Integer> itemOrders) {
-		List<Integer> updatedInventory = new ArrayList<Integer>();
+	private List<Integer> nextState(List<Integer> state, List<Integer> action) {
+		List<Integer> nextState = new ArrayList<Integer>();
 		
 		for (int i = 0; i < store.getMaxTypes(); i++) {
-			updatedInventory.add(stockInventory.get(i) + itemOrders.get(i));
+			nextState.add(state.get(i) + action.get(i));
 		}
 		
-		return updatedInventory;
+		return nextState;
 	}
 }
