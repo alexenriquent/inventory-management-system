@@ -1,6 +1,7 @@
 package solver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -13,6 +14,8 @@ public class RTDP {
 	private ProblemSpec spec = new ProblemSpec();
 	private Store store;
     private List<Matrix> probabilities;
+    
+    private static final int TIME_LIMIT = 1000;
 	
 	public RTDP(ProblemSpec spec) {
 		this.spec = spec;
@@ -20,23 +23,30 @@ public class RTDP {
         probabilities = spec.getProbabilities();
 	}
 	
-	public List<Integer> selectAction(List<Integer> stockInventory) {
-		List<Integer> itemOrders = new ArrayList<Integer>();
+	public List<Integer> selectAction(List<Integer> state) {
+		List<Integer> action = new ArrayList<Integer>();
 		double qValue = Double.NEGATIVE_INFINITY;
 		
 		double startTime = System.currentTimeMillis();
+		int iterations = 0;
 
-		while (System.currentTimeMillis() - startTime < 1000) {
-			List<Integer> orders = generateAction(stockInventory);
-			double q = qValue(stockInventory, orders);
+		while (System.currentTimeMillis() - startTime < TIME_LIMIT) {
+			List<Integer> order = new ArrayList<Integer>();
+			if (iterations % 2 == 0) {
+				order = generateAction(state);
+			} else {
+				order = generateReversedAction(state);
+			}
+			double q = qValue(state, order);
 			if (q > qValue) {
 				qValue = q;
-				itemOrders.clear();
-				itemOrders.addAll(orders);
+				action.clear();
+				action.addAll(order);
 			}
+			iterations++;
 		}
 
-		return itemOrders;
+		return action;
 	}
 	
 	private double qValue(List<Integer> state, List<Integer> action) {
@@ -47,7 +57,7 @@ public class RTDP {
 		return immediateReward + (spec.getDiscountFactor() * (transition * expectedReward));
 	}
 	
-	private List<Integer> generateAction(List<Integer> state) {
+	public List<Integer> generateAction(List<Integer> state) {
 		List<Integer> itemOrders = new ArrayList<Integer>();
 		List<Integer> itemReturns = new ArrayList<Integer>();
 		
@@ -74,6 +84,49 @@ public class RTDP {
 			} else {
 				int returns = random.nextInt((store.getMaxReturns() + 1) - totalReturns);
 				itemReturns.add(returns);
+				totalReturns += returns;
+			}
+		}
+						
+		List<Integer> action = new ArrayList<Integer>(itemOrders.size());
+		for(int i = 0; i < itemOrders.size(); i++) {
+			if (itemOrders.get(i) - itemReturns.get(i) < 0) {
+				action.add(0);
+			} else {
+				action.add(itemOrders.get(i) - itemReturns.get(i));
+			}
+		}
+		
+		return action;
+	}
+	
+	private List<Integer> generateReversedAction(List<Integer> state) {
+		List<Integer> itemOrders = new ArrayList<Integer>(Collections.nCopies(store.getMaxTypes(), 0));
+		List<Integer> itemReturns = new ArrayList<Integer>(Collections.nCopies(store.getMaxTypes(), 0));
+		
+		int totalItems = state.stream().mapToInt(Integer::intValue).sum();
+		int totalOrders = 0;
+		int totalReturns = 0;
+		
+		Random random = new Random();
+		
+		for (int i = store.getMaxTypes() - 1; i >= 0; i--) {
+			if (totalItems >= store.getCapacity() || totalOrders >= store.getMaxPurchase()) {
+				itemOrders.set(i, 0);
+			} else {
+				int orders = random.nextInt((store.getMaxPurchase() + 1) - totalOrders);
+				while (totalItems + orders > store.getCapacity()) {
+					orders = random.nextInt((store.getMaxPurchase() + 1) - totalOrders);
+				}
+				itemOrders.set(i, orders);
+				totalOrders += orders;
+				totalItems += orders;
+			}
+			if (totalReturns >= store.getMaxReturns()) {
+				itemReturns.set(i, 0);
+			} else {
+				int returns = random.nextInt((store.getMaxReturns() + 1) - totalReturns);
+				itemReturns.set(i, returns);
 				totalReturns += returns;
 			}
 		}
