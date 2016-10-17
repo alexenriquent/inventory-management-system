@@ -32,15 +32,15 @@ public class MySolver implements OrderingAgent {
 //		for (Policy policy : valueIteration.getPolicies()) {
 //			System.out.print(policy.getState() + " : ");
 //			System.out.println(RTDP.selectAction(policy.getState()));
-//		}		
+//		}	
 	}
 	
-	public List<Integer> generateStockOrder(List<Integer> state, int numWeeksLeft) {		
+	public List<Integer> generateStockOrder(List<Integer> state, int numWeeksLeft) {	
 		if (spec.getStore().getName().equals("tiny") ||
 			spec.getStore().getName().equals("small") ||
 			spec.getStore().getName().equals("medium")) {
-			return valueIteration.getOptimalPolicy(state);
-//			return RTDP.selectAction(state);
+//			return valueIteration.getOptimalPolicy(state);
+			return RTDP.selectAction(state);
 		} else {
 			return RTDP.selectAction(state);
 		}

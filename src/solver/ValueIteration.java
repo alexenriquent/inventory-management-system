@@ -26,16 +26,12 @@ public class ValueIteration {
 			policy.setValue(policy.reward());
 		}	
 		for (Policy policy : policies) {
-			double gamma = spec.getDiscountFactor();
 			double exponent = 1.0;
 										
 			while (true) {
 				double maxValue = Double.NEGATIVE_INFINITY;
 				for (List<Integer> action : policy.getActions()) {
-					double immediateReward = policy.getValue();
-					double expectedReward = policy.reward(action);
-					double transition = policy.transition(action);
-					double value = immediateReward + (Math.pow(gamma, exponent) * (transition * expectedReward));
+					double value = value(policy, action, exponent);
 					if (value > maxValue) {
 						maxValue = value;
 						policy.getOptimalAction().clear();
@@ -47,6 +43,14 @@ public class ValueIteration {
 				exponent++;
 			}
 		}
+	}
+	
+	private double value(Policy policy, List<Integer> action, double exponent) {
+		double immediateReward = policy.getValue();
+		double expectedReward = policy.reward(action);
+		double transition = policy.transition(action);
+		
+		return immediateReward + (Math.pow(spec.getDiscountFactor(), exponent) * (transition * expectedReward));
 	}
 	
 	public List<Policy> getPolicies() {
