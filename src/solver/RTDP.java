@@ -15,7 +15,7 @@ public class RTDP {
 	private Store store;
     private List<Matrix> probabilities;
     
-    private static final int TIME_LIMIT = 1000;
+    private static final int TIME_LIMIT = 500;
 	
 	public RTDP(ProblemSpec spec) {
 		this.spec = spec;
@@ -82,16 +82,20 @@ public class RTDP {
 			if (totalReturns >= store.getMaxReturns()) {
 				itemReturns.add(0);
 			} else {
-				int returns = random.nextInt((store.getMaxReturns() + 1) - totalReturns);
-				itemReturns.add(returns);
-				totalReturns += returns;
+				if (state.get(i) == 0) {
+					itemReturns.add(0);
+				} else {
+					int returns = random.nextInt((store.getMaxReturns() + 1) - totalReturns);
+					itemReturns.add(returns);
+					totalReturns += returns;
+				}
 			}
 		}
 						
 		List<Integer> action = new ArrayList<Integer>(itemOrders.size());
 		for(int i = 0; i < itemOrders.size(); i++) {
-			if (itemOrders.get(i) - itemReturns.get(i) < 0) {
-				action.add(0);
+			if (/*state.get(i) +*/ itemOrders.get(i) - itemReturns.get(i) < 0) {
+				action.add(itemOrders.get(i));
 			} else {
 				action.add(itemOrders.get(i) - itemReturns.get(i));
 			}
@@ -125,16 +129,20 @@ public class RTDP {
 			if (totalReturns >= store.getMaxReturns()) {
 				itemReturns.set(i, 0);
 			} else {
-				int returns = random.nextInt((store.getMaxReturns() + 1) - totalReturns);
-				itemReturns.set(i, returns);
-				totalReturns += returns;
+				if (state.get(i) == 0) {
+					itemReturns.set(i, 0);
+				} else {
+					int returns = random.nextInt((store.getMaxReturns() + 1) - totalReturns);
+					itemReturns.set(i, returns);
+					totalReturns += returns;
+				}
 			}
 		}
 						
 		List<Integer> action = new ArrayList<Integer>(itemOrders.size());
 		for(int i = 0; i < itemOrders.size(); i++) {
-			if (itemOrders.get(i) - itemReturns.get(i) < 0) {
-				action.add(0);
+			if (/*state.get(i) +*/ itemOrders.get(i) - itemReturns.get(i) < 0) {
+				action.add(itemOrders.get(i));
 			} else {
 				action.add(itemOrders.get(i) - itemReturns.get(i));
 			}
@@ -196,6 +204,21 @@ public class RTDP {
 		
 		return totalReward;
 	}
+	
+//	private double reward(List<Integer> state, List<Integer> action) {
+//		List<Integer> nextState = nextState(state, action);
+//		double totalReward = 0.0;
+//		
+//		for (int i = 0; i < store.getMaxTypes(); i++) {
+//			double reward = 0.0;
+//			for (int j = nextState.get(i) + 1; j < store.getCapacity(); j++) {
+//				reward = j - nextState.get(i) * (probabilities.get(i).get(nextState.get(i), j));
+//			}
+//			totalReward += -1 * reward;
+//		}
+//		
+//		return totalReward;
+//	}
 	
 	private List<Integer> nextState(List<Integer> state, List<Integer> action) {
 		List<Integer> nextState = new ArrayList<Integer>();
