@@ -63,7 +63,8 @@ public class Policy {
 		List<List<Integer>> validActions = new ArrayList<List<Integer>>();
 		for (List<Integer> action : actions) {
 			List<Integer> nextState = nextState(action);
-			if (nextState.stream().mapToInt(Integer::intValue).sum() <= store.getCapacity()) {
+			if (nextState.stream().mapToInt(Integer::intValue).sum() <= store.getCapacity() &&
+				validAction(action)) {
 				List<Integer> validAction = new ArrayList<Integer>(action);
 				validActions.add(validAction);
 			}
@@ -71,15 +72,15 @@ public class Policy {
 		return validActions;
 	}
 	
-//	private boolean validAction(List<Integer> action) {
-//		List<Integer> nextState = nextState(action);
-//		for (int items : nextState) {
-//			if (items < 0) {
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
+	private boolean validAction(List<Integer> action) {
+		List<Integer> nextState = nextState(action);
+		for (int items : nextState) {
+			if (items < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	public double transition(List<Integer> action) {
 		double totalTransitionProbability = 1.0;

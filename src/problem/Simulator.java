@@ -162,7 +162,7 @@ public class Simulator {
                 if(order.get(i) > stockInventory.get(i)) {
                     throw new IllegalArgumentException("Return amount exceeds current stock.");
                 }
-                stockInventory.set(i, stockInventory.get(i) - order.get(i));
+                stockInventory.set(i, stockInventory.get(i) + order.get(i));
 
                 // subtract return fees
                 profit -= (problemSpec.getPrices().get(i) * 0.5 * Math.abs(order.get(i)));

@@ -15,7 +15,7 @@ public class RTDP {
 	private Store store;
     private List<Matrix> probabilities;
     
-    private static final int TIME_LIMIT = 500;
+    private static final int TIME_LIMIT = 1000;
 	
 	public RTDP(ProblemSpec spec) {
 		this.spec = spec;
