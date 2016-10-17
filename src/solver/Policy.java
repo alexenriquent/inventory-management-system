@@ -136,21 +136,6 @@ public class Policy {
 		return totalReward;
 	}
 	
-//	public double reward(List<Integer> action) {
-//		List<Integer> nextState = nextState(action);
-//		double totalReward = 0.0;
-//		
-//		for (int i = 0; i < store.getMaxTypes(); i++) {
-//			double reward = 0.0;
-//			for (int j = nextState.get(i) + 1; j < store.getCapacity(); j++) {
-//				reward = j - nextState.get(i) * (probabilities.get(i).get(nextState.get(i), j));
-//			}
-//			totalReward += -1 * reward;
-//		}
-//		
-//		return totalReward;
-//	}
-	
 	private List<Integer> nextState(List<Integer> action) {
 		List<Integer> nextState = new ArrayList<Integer>();
 		

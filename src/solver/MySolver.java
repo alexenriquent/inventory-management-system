@@ -26,9 +26,13 @@ public class MySolver implements OrderingAgent {
 		}
 		
 //		for (Policy policy : valueIteration.getPolicies()) {
+//			System.out.println(policy.getState() + " : " + policy.getOptimalAction());
+//		}
+//		System.out.println();
+//		for (Policy policy : valueIteration.getPolicies()) {
 //			System.out.print(policy.getState() + " : ");
 //			System.out.println(RTDP.selectAction(policy.getState()));
-//		}
+//		}		
 	}
 	
 	public List<Integer> generateStockOrder(List<Integer> state, int numWeeksLeft) {		

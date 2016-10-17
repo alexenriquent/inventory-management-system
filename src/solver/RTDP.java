@@ -94,7 +94,7 @@ public class RTDP {
 						
 		List<Integer> action = new ArrayList<Integer>(itemOrders.size());
 		for(int i = 0; i < itemOrders.size(); i++) {
-			if (/*state.get(i) +*/ itemOrders.get(i) - itemReturns.get(i) < 0) {
+			if (/*state.get(i)*/ + itemOrders.get(i) - itemReturns.get(i) < 0) {
 				action.add(itemOrders.get(i));
 			} else {
 				action.add(itemOrders.get(i) - itemReturns.get(i));
@@ -141,7 +141,7 @@ public class RTDP {
 						
 		List<Integer> action = new ArrayList<Integer>(itemOrders.size());
 		for(int i = 0; i < itemOrders.size(); i++) {
-			if (/*state.get(i) +*/ itemOrders.get(i) - itemReturns.get(i) < 0) {
+			if (/*state.get(i)*/ + itemOrders.get(i) - itemReturns.get(i) < 0) {
 				action.add(itemOrders.get(i));
 			} else {
 				action.add(itemOrders.get(i) - itemReturns.get(i));
@@ -204,21 +204,6 @@ public class RTDP {
 		
 		return totalReward;
 	}
-	
-//	private double reward(List<Integer> state, List<Integer> action) {
-//		List<Integer> nextState = nextState(state, action);
-//		double totalReward = 0.0;
-//		
-//		for (int i = 0; i < store.getMaxTypes(); i++) {
-//			double reward = 0.0;
-//			for (int j = nextState.get(i) + 1; j < store.getCapacity(); j++) {
-//				reward = j - nextState.get(i) * (probabilities.get(i).get(nextState.get(i), j));
-//			}
-//			totalReward += -1 * reward;
-//		}
-//		
-//		return totalReward;
-//	}
 	
 	private List<Integer> nextState(List<Integer> state, List<Integer> action) {
 		List<Integer> nextState = new ArrayList<Integer>();

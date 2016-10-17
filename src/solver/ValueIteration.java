@@ -36,7 +36,7 @@ public class ValueIteration {
 					double expectedReward = policy.reward(action);
 					double transition = policy.transition(action);
 					double value = immediateReward + (Math.pow(gamma, exponent) * (transition * expectedReward));
-					if (value > maxValue) {
+					if (value >= maxValue) {
 						maxValue = value;
 						policy.getOptimalAction().clear();
 						policy.getOptimalAction().addAll(action);
@@ -125,7 +125,7 @@ public class ValueIteration {
 		return actions;
 	}
 	
-//	private List<List<Integer>> generateActions() {
+//	public List<List<Integer>> generateActions() {
 //		List<List<Integer>> orders = new ArrayList<List<Integer>>();
 //		List<List<Integer>> returns = new ArrayList<List<Integer>>();
 //		List<List<Integer>> actions = new ArrayList<List<Integer>>();
