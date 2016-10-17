@@ -94,7 +94,7 @@ public class RTDP {
 						
 		List<Integer> action = new ArrayList<Integer>(itemOrders.size());
 		for(int i = 0; i < itemOrders.size(); i++) {
-			if (/*state.get(i)*/ + itemOrders.get(i) - itemReturns.get(i) < 0) {
+			if (state.get(i) + itemOrders.get(i) - itemReturns.get(i) < 0) {
 				action.add(itemOrders.get(i));
 			} else {
 				action.add(itemOrders.get(i) - itemReturns.get(i));
@@ -141,7 +141,7 @@ public class RTDP {
 						
 		List<Integer> action = new ArrayList<Integer>(itemOrders.size());
 		for(int i = 0; i < itemOrders.size(); i++) {
-			if (/*state.get(i)*/ + itemOrders.get(i) - itemReturns.get(i) < 0) {
+			if (state.get(i) + itemOrders.get(i) - itemReturns.get(i) < 0) {
 				action.add(itemOrders.get(i));
 			} else {
 				action.add(itemOrders.get(i) - itemReturns.get(i));
