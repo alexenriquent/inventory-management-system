@@ -15,7 +15,7 @@ public class RTDP {
 	private Store store;
     private List<Matrix> probabilities;
     
-    private static final int TIME_LIMIT = 1000;
+    private static final int TIME_LIMIT = 500;
 	
 	public RTDP(ProblemSpec spec) {
 		this.spec = spec;
@@ -182,7 +182,7 @@ public class RTDP {
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double reward = 0.0;
 			for (int j = state.get(i) + 1; j < store.getCapacity(); j++) {
-				reward = j - state.get(i) * (probabilities.get(i).get(state.get(i), j));
+				reward = (j - state.get(i)) * spec.getPrices().get(i) * (probabilities.get(i).get(state.get(i), j));
 			}
 			totalReward += -1 * reward;
 		}
@@ -196,7 +196,7 @@ public class RTDP {
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double reward = 0.0;
 			for (int j = state.get(i) + action.get(i) + 1; j < store.getCapacity(); j++) {
-				reward = j - state.get(i) - action.get(i) 
+				reward = (j - state.get(i) - action.get(i)) * spec.getPrices().get(i)
 					   * (probabilities.get(i).get(state.get(i) + action.get(i), j));
 			}
 			totalReward += -1 * reward;

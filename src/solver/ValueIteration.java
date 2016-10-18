@@ -50,7 +50,11 @@ public class ValueIteration {
 		double expectedReward = policy.reward(action);
 		double transition = policy.transition(action);
 		
-		return immediateReward + (Math.pow(spec.getDiscountFactor(), exponent) * (transition * expectedReward));
+		if (transition == 0.0) {
+			return Double.NEGATIVE_INFINITY;
+		} else {
+			return immediateReward + (Math.pow(spec.getDiscountFactor(), exponent) * (transition * expectedReward));
+		}
 	}
 	
 	public List<Policy> getPolicies() {

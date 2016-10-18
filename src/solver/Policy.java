@@ -9,7 +9,6 @@ import problem.Store;
 
 public class Policy {
 	
-	@SuppressWarnings("unused")
 	private ProblemSpec spec = new ProblemSpec();
 	private Store store;
     private List<Matrix> probabilities;
@@ -113,7 +112,7 @@ public class Policy {
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double reward = 0.0;
 			for (int j = state.get(i) + 1; j < store.getCapacity(); j++) {
-				reward = j - state.get(i) * (probabilities.get(i).get(state.get(i), j));
+				reward = (j - state.get(i)) * spec.getPrices().get(i) * (probabilities.get(i).get(state.get(i), j));
 			}
 			totalReward += -1 * reward;
 		}
@@ -127,7 +126,7 @@ public class Policy {
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double reward = 0.0;
 			for (int j = state.get(i) + action.get(i) + 1; j < store.getCapacity(); j++) {
-				reward = j - state.get(i) - action.get(i) 
+				reward = (j - state.get(i) - action.get(i)) * spec.getPrices().get(i)
 					   * (probabilities.get(i).get(state.get(i) + action.get(i), j));
 			}
 			totalReward += -1 * reward;
