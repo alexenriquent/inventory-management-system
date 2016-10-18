@@ -25,10 +25,10 @@ public class MySolver implements OrderingAgent {
 		    valueIteration.valueIteration();
 		}
 		
-		for (Policy policy : valueIteration.getPolicies()) {
-			System.out.println(policy.getState() + " : " + policy.getOptimalAction());
-		}
-		System.out.println();
+//		for (Policy policy : valueIteration.getPolicies()) {
+//			System.out.println(policy.getState() + " : " + policy.getOptimalAction());
+//		}
+//		System.out.println();
 //		for (Policy policy : valueIteration.getPolicies()) {
 //			System.out.print(policy.getState() + " : ");
 //			System.out.println(RTDP.selectAction(policy.getState()));
@@ -40,9 +40,9 @@ public class MySolver implements OrderingAgent {
 			spec.getStore().getName().equals("small") ||
 			spec.getStore().getName().equals("medium")) {
 //			return valueIteration.getOptimalPolicy(state);
-			return RTDP.selectAction(state);
+			return RTDP.selectAction(state, 500);
 		} else {
-			return RTDP.selectAction(state);
+			return RTDP.selectAction(state, 10000);
 		}
 	}
 }

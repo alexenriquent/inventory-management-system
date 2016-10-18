@@ -14,23 +14,21 @@ public class RTDP {
 	private ProblemSpec spec = new ProblemSpec();
 	private Store store;
     private List<Matrix> probabilities;
-    
-    private static final int TIME_LIMIT = 500;
-	
+    	
 	public RTDP(ProblemSpec spec) {
 		this.spec = spec;
 		store = spec.getStore();
         probabilities = spec.getProbabilities();
 	}
 	
-	public List<Integer> selectAction(List<Integer> state) {
+	public List<Integer> selectAction(List<Integer> state, int timeLimit) {
 		List<Integer> action = new ArrayList<Integer>();
 		double qValue = Double.NEGATIVE_INFINITY;
 		
 		double startTime = System.currentTimeMillis();
 		int iterations = 0;
 
-		while (System.currentTimeMillis() - startTime < TIME_LIMIT) {
+		while (System.currentTimeMillis() - startTime < timeLimit) {
 			List<Integer> order = new ArrayList<Integer>();
 			if (iterations % 2 == 0) {
 				order = generateAction(state);
