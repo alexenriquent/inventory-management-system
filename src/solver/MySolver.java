@@ -39,8 +39,8 @@ public class MySolver implements OrderingAgent {
 		if (spec.getStore().getName().equals("tiny") ||
 			spec.getStore().getName().equals("small") ||
 			spec.getStore().getName().equals("medium")) {
-//			return valueIteration.getOptimalPolicy(state);
-			return RTDP.selectAction(state, 500);
+			return valueIteration.getOptimalPolicy(state);
+//			return RTDP.selectAction(state, 500);
 		} else {
 			return RTDP.selectAction(state, 10000);
 		}
