@@ -42,7 +42,11 @@ public class MySolver implements OrderingAgent {
 			return valueIteration.getOptimalPolicy(state);
 //			return RTDP.selectAction(state, 500);
 		} else {
-			return RTDP.selectAction(state, 10000);
+			if (spec.getStore().getName().equals("large")) {
+				return RTDP.selectAction(state, 10000);
+			} else {
+				return RTDP.selectAction(state, 30000);
+			}
 		}
 	}
 }
