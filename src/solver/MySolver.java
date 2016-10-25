@@ -31,7 +31,7 @@ public class MySolver implements OrderingAgent {
 //		System.out.println();
 //		for (Policy policy : valueIteration.getPolicies()) {
 //			System.out.print(policy.getState() + " : ");
-//			System.out.println(RTDP.selectAction(policy.getState()));
+//			System.out.println(RTDP.selectAction(policy.getState(), 500));
 //		}	
 	}
 	

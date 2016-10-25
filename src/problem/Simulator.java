@@ -126,12 +126,15 @@ public class Simulator {
         for(int item : order) {
             sum += item;
         }
+        for(int item : stockInventory) {
+            sum += item;
+        }
 
         ArrayList<Integer> correctedOrder = new ArrayList<Integer>(order);
 
         int item = 0;
         while(sum > store.getCapacity()) {
-            if(order.get(item) == 0) {
+            if(order.get(item) <= 0) {
                 // go to next item type
                 item++;
 
@@ -158,8 +161,8 @@ public class Simulator {
                 totalOrdered += order.get(i);
                 stockInventory.set(i, stockInventory.get(i) + order.get(i));
             } else {
-                totalReturned += order.get(i);
-                if(order.get(i) > stockInventory.get(i)) {
+                totalReturned -= order.get(i);
+                if((stockInventory.get(i) + order.get(i)) < 0) {
                     throw new IllegalArgumentException("Return amount exceeds current stock.");
                 }
                 stockInventory.set(i, stockInventory.get(i) + order.get(i));
@@ -203,8 +206,8 @@ public class Simulator {
 			System.out.println();
 			System.out.println("Week " + currentWeek);
 			System.out.println("Start stock:\t\t\t" + weekStartInventory);
-            System.out.println("Customer wants:\t\t\t" + wants);
-            System.out.println("After customer consumption:\t" + afterConsumptionInventory);
+			System.out.println("Customer wants:\t\t\t" + wants);
+			System.out.println("After customer consumption:\t" + afterConsumptionInventory);
 			System.out.println("Order:\t\t\t\t" + order);
 			System.out.println("Post-order:\t\t\t" + afterOrderInventory);
 			System.out.println("End:\t\t\t\t" + stockInventory);
