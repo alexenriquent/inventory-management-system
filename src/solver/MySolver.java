@@ -24,29 +24,19 @@ public class MySolver implements OrderingAgent {
 			valueIteration.generatePolicies();
 		    valueIteration.valueIteration();
 		}
-		
-//		for (Policy policy : valueIteration.getPolicies()) {
-//			System.out.println(policy.getState() + " : " + policy.getOptimalAction());
-//		}
-//		System.out.println();
-//		for (Policy policy : valueIteration.getPolicies()) {
-//			System.out.print(policy.getState() + " : ");
-//			System.out.println(RTDP.selectAction(policy.getState(), 500));
-//		}	
 	}
 	
 	public List<Integer> generateStockOrder(List<Integer> state, int numWeeksLeft) {	
-		if (spec.getStore().getName().equals("tiny") ||
-			spec.getStore().getName().equals("small") ||
-			spec.getStore().getName().equals("medium")) {
-			return valueIteration.getOptimalPolicy(state);
-//			return RTDP.selectAction(state, 500);
+		if (spec.getStore().getName().equals("tiny")) {
+			return RTDP.selectAction(state, 300);
+		} else if (spec.getStore().getName().equals("small")) {
+			return RTDP.selectAction(state, 500);
+		} else if (spec.getStore().getName().equals("medium")) {
+			return RTDP.selectAction(state, 2000);
+		} else if (spec.getStore().getName().equals("large")) {
+			return RTDP.selectLargeAction(state, 5000);
 		} else {
-			if (spec.getStore().getName().equals("large")) {
-				return RTDP.selectAction(state, 10000);
-			} else {
-				return RTDP.selectAction(state, 30000);
-			}
+			return RTDP.selectLargeAction(state, 10000);
 		}
 	}
 }

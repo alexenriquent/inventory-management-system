@@ -7,9 +7,9 @@ import problem.Simulator;
 
 public class Runner {
 	/** The path for the input file. */
-	private static String inputPath = "test/small-v1.txt";
+	private static String inputPath = null;
 	/** The path for the output file. */
-	private static String outputPath = "test/output.txt";
+	private static String outputPath = null;
 	
 	/** The default number of simulations to run. */
 	public static int DEFAULT_NUM_SIMULATIONS = 1;

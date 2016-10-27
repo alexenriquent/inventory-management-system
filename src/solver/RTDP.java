@@ -47,6 +47,26 @@ public class RTDP {
 		return action;
 	}
 	
+	public List<Integer> selectLargeAction(List<Integer> state, int timeLimit) {
+		List<Integer> action = new ArrayList<Integer>();
+		double qValue = Double.NEGATIVE_INFINITY;
+		
+		double startTime = System.currentTimeMillis();
+
+		while (System.currentTimeMillis() - startTime < timeLimit) {
+			List<Integer> order = new ArrayList<Integer>();
+			order = generateRandomAction(state);
+			double q = qValue(state, order);
+			if (q > qValue) {
+				qValue = q;
+				action.clear();
+				action.addAll(order);
+			}
+		}
+
+		return action;
+	}
+	
 	private double qValue(List<Integer> state, List<Integer> action) {
 		double immediateReward = reward(state);
 		double expectedReward = reward(state, action);
@@ -99,7 +119,7 @@ public class RTDP {
 			}
 		}
 		
-		return action;
+		return itemOrders;
 	}
 	
 	private List<Integer> generateReversedAction(List<Integer> state) {
@@ -146,6 +166,38 @@ public class RTDP {
 			}
 		}
 		
+		return itemOrders;
+	}
+	
+	public List<Integer> generateRandomAction(List<Integer> state) {
+		List<Integer> action = new ArrayList<Integer>();
+		Random random = new Random();
+		
+		int totalItems = 0;
+		int totalOrder = 0;
+		for (int i : state) {
+			totalItems += i;
+		}
+		
+		while (totalOrder < store.getMaxPurchase()) {
+			action.clear();
+			totalItems -= totalOrder;
+			totalOrder = 0;
+			for (int i = 0; i < store.getMaxTypes(); i++) {
+				if (totalItems >= store.getCapacity() ||
+				    totalOrder >= store.getMaxPurchase()) {
+					action.add(0);
+				} else {
+					int order = random.nextInt((1 - 0) + 1) + 0;
+					action.add(order);
+					if (order > 0) {
+						totalOrder++;
+						totalItems++;
+					}
+				}
+			}
+		}
+
 		return action;
 	}
 	
