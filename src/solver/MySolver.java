@@ -32,9 +32,11 @@ public class MySolver implements OrderingAgent {
 		} else if (spec.getStore().getName().equals("small")) {
 			return RTDP.selectAction(state, 500);
 		} else if (spec.getStore().getName().equals("medium")) {
-			return RTDP.selectAction(state, 2000);
+//			return RTDP.selectLargeAction(state, 3000);
+			return RTDP.selectAction(state, 5000);
 		} else if (spec.getStore().getName().equals("large")) {
-			return RTDP.selectLargeAction(state, 5000);
+//			return RTDP.selectLargeAction(state, 5000);
+			return RTDP.selectAction(state, 10000);
 		} else {
 			return RTDP.selectLargeAction(state, 10000);
 		}

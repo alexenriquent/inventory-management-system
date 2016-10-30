@@ -26,22 +26,23 @@ public class RTDP {
 		double qValue = Double.NEGATIVE_INFINITY;
 		
 		double startTime = System.currentTimeMillis();
-		int iterations = 0;
+//		int iterations = 0;
 
 		while (System.currentTimeMillis() - startTime < timeLimit) {
 			List<Integer> order = new ArrayList<Integer>();
-			if (iterations % 2 == 0) {
-				order = generateAction(state);
-			} else {
-				order = generateReversedAction(state);
-			}
+//			if (iterations % 2 == 0) {
+//				order = generateAction(state);
+//			} else {
+//				order = generateReversedAction(state);
+//			}
+			order = generateAction(state);
 			double q = qValue(state, order);
 			if (q > qValue) {
 				qValue = q;
 				action.clear();
 				action.addAll(order);
 			}
-			iterations++;
+//			iterations++;
 		}
 
 		return action;
