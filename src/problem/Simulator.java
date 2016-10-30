@@ -58,6 +58,15 @@ public class Simulator {
 		}
 	}
 	
+	public Simulator(ProblemSpec spec, boolean verbose) {
+	    problemSpec = spec;
+		store = problemSpec.getStore();
+		probabilities = problemSpec.getProbabilities();
+		this.verbose = verbose;
+		
+        reset();
+	}
+	
 	public void reset() {
 	    currentWeek = 1;
 	    stockInventory = problemSpec.getInitialStock();

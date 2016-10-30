@@ -1,12 +1,12 @@
 package solver;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import problem.Matrix;
 import problem.ProblemSpec;
+import problem.Simulator;
 import problem.Store;
 
 public class RTDP {
@@ -14,11 +14,13 @@ public class RTDP {
 	private ProblemSpec spec = new ProblemSpec();
 	private Store store;
     private List<Matrix> probabilities;
+    private Simulator simulator;
     	
 	public RTDP(ProblemSpec spec) {
 		this.spec = spec;
 		store = spec.getStore();
         probabilities = spec.getProbabilities();
+        simulator = new Simulator(spec, false);
 	}
 	
 	public List<Integer> selectAction(List<Integer> state, int timeLimit) {
@@ -26,15 +28,9 @@ public class RTDP {
 		double qValue = Double.NEGATIVE_INFINITY;
 		
 		double startTime = System.currentTimeMillis();
-//		int iterations = 0;
 
 		while (System.currentTimeMillis() - startTime < timeLimit) {
 			List<Integer> order = new ArrayList<Integer>();
-//			if (iterations % 2 == 0) {
-//				order = generateAction(state);
-//			} else {
-//				order = generateReversedAction(state);
-//			}
 			order = generateAction(state);
 			double q = qValue(state, order);
 			if (q > qValue) {
@@ -42,7 +38,6 @@ public class RTDP {
 				action.clear();
 				action.addAll(order);
 			}
-//			iterations++;
 		}
 
 		return action;
@@ -123,53 +118,6 @@ public class RTDP {
 		return itemOrders;
 	}
 	
-	private List<Integer> generateReversedAction(List<Integer> state) {
-		List<Integer> itemOrders = new ArrayList<Integer>(Collections.nCopies(store.getMaxTypes(), 0));
-		List<Integer> itemReturns = new ArrayList<Integer>(Collections.nCopies(store.getMaxTypes(), 0));
-		
-		int totalItems = state.stream().mapToInt(Integer::intValue).sum();
-		int totalOrders = 0;
-		int totalReturns = 0;
-		
-		Random random = new Random();
-		
-		for (int i = store.getMaxTypes() - 1; i >= 0; i--) {
-			if (totalItems >= store.getCapacity() || totalOrders >= store.getMaxPurchase()) {
-				itemOrders.set(i, 0);
-			} else {
-				int orders = random.nextInt((store.getMaxPurchase() + 1) - totalOrders);
-				while (totalItems + orders > store.getCapacity()) {
-					orders = random.nextInt((store.getMaxPurchase() + 1) - totalOrders);
-				}
-				itemOrders.set(i, orders);
-				totalOrders += orders;
-				totalItems += orders;
-			}
-			if (totalReturns >= store.getMaxReturns()) {
-				itemReturns.set(i, 0);
-			} else {
-				if (state.get(i) == 0) {
-					itemReturns.set(i, 0);
-				} else {
-					int returns = random.nextInt((store.getMaxReturns() + 1) - totalReturns);
-					itemReturns.set(i, returns);
-					totalReturns += returns;
-				}
-			}
-		}
-						
-		List<Integer> action = new ArrayList<Integer>(itemOrders.size());
-		for(int i = 0; i < itemOrders.size(); i++) {
-			if (state.get(i) + itemOrders.get(i) - itemReturns.get(i) < 0) {
-				action.add(itemOrders.get(i));
-			} else {
-				action.add(itemOrders.get(i) - itemReturns.get(i));
-			}
-		}
-		
-		return itemOrders;
-	}
-	
 	public List<Integer> generateRandomAction(List<Integer> state) {
 		List<Integer> action = new ArrayList<Integer>();
 		Random random = new Random();
@@ -205,6 +153,14 @@ public class RTDP {
 	private double transition(List<Integer> state, List<Integer> action) {
 		double totalTransitionProbability = 1.0;
 		List<Integer> nextState = nextState(state, action);
+		List<Integer> userWants = simulator.sampleUserWants(state);
+		
+		for (int i = 0; i < nextState.size(); i++) {
+			nextState.set(i, nextState.get(i) - userWants.get(i));
+			if (nextState.get(i) < 0) {
+				nextState.set(i, 0);
+			}
+		}
 		
 		for (int i = 0; i < store.getMaxTypes(); i++) {
 			double transitionProbability = 0.0;
@@ -218,9 +174,9 @@ public class RTDP {
 					transitionProbability += probabilities.get(i).get(totalItems, j);
 				}
 			}
-			if (transitionProbability == 0.0) {
-				transitionProbability = 1.0;
-			}
+//			if (transitionProbability == 0.0) {
+//				transitionProbability = 1.0;
+//			}
 			totalTransitionProbability *= transitionProbability;
 		}
 		

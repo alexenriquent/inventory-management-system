@@ -32,7 +32,7 @@ public class ValueIteration {
 				double maxValue = Double.NEGATIVE_INFINITY;
 				for (List<Integer> action : policy.getActions()) {
 					double value = value(policy, action, exponent);
-					if (value > maxValue) {
+					if (value >= maxValue) {
 						maxValue = value;
 						policy.getOptimalAction().clear();
 						policy.getOptimalAction().addAll(action);
@@ -132,77 +132,4 @@ public class ValueIteration {
 		
 		return actions;
 	}
-	
-//	public List<List<Integer>> generateActions() {
-//		List<List<Integer>> orders = new ArrayList<List<Integer>>();
-//		List<List<Integer>> returns = new ArrayList<List<Integer>>();
-//		List<List<Integer>> actions = new ArrayList<List<Integer>>();
-//		
-//		for (int i = 0; i <= store.getMaxPurchase(); i++) {
-//			List<Integer> orderItems = new ArrayList<Integer>();
-//			orderItems.add(i);
-//			orders.add(orderItems);
-//		}
-//		
-//		for (int i = 0; i <= store.getMaxReturns(); i++) {
-//			List<Integer> returnItems = new ArrayList<Integer>();
-//			returnItems.add(i);
-//			returns.add(returnItems);
-//		}
-//		
-//		for (int i = 1; i < store.getMaxTypes(); i++) {
-//			List<List<Integer>> tempOrders = new ArrayList<List<Integer>>();
-//			for (List<Integer> orderItems : orders) {
-//				int totalItems = orderItems.stream().mapToInt(Integer::intValue).sum();
-//				for (int j = 0; j <= store.getMaxPurchase() - totalItems; j++) {
-//					List<Integer> newOrderItems = new ArrayList<Integer>(orderItems);
-//					newOrderItems.add(j);
-//					tempOrders.add(newOrderItems);
-//				}
-//			}
-//			orders.clear();
-//			orders.addAll(tempOrders);
-//			tempOrders.clear();
-//		}
-//		
-//		for (int i = 1; i < store.getMaxTypes(); i++) {
-//			List<List<Integer>> tempReturns = new ArrayList<List<Integer>>();
-//			for (List<Integer> returnItems : returns) {
-//				int totalItems = returnItems.stream().mapToInt(Integer::intValue).sum();
-//				for (int j = 0; j <= store.getMaxReturns() - totalItems; j++) {
-//					List<Integer> newReturnItems = new ArrayList<Integer>(returnItems);
-//					newReturnItems.add(j);
-//					tempReturns.add(newReturnItems);
-//				}
-//			}
-//			returns.clear();
-//			returns.addAll(tempReturns);
-//			tempReturns.clear();
-//		}
-//		
-//		actions.addAll(orders);
-//		
-//		for (List<Integer> orderItems : orders) {
-//			for (List<Integer> returnItems : returns) {
-//				List<Integer> returnList = new ArrayList<Integer>();
-//				for (int i = 0; i < store.getMaxTypes(); i++) {
-//					returnList.add(orderItems.get(i) - returnItems.get(i));
-//				}
-//				if (isValidAction(actions, returnList)) {
-//					actions.add(returnList);
-//				}
-//			}
-//		}
-//		
-//		return actions;
-//	}
-//	
-//	private boolean isValidAction(List<List<Integer>> actions, List<Integer> newAction) {
-//		for (int i = 0; i < actions.size(); i++) {
-//			if (newAction.equals(actions.get(i))) {
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
 }
